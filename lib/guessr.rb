@@ -27,7 +27,7 @@ module Guessr
 
     def greeting
       puts "Welcome to the Number Guessing Game, Database Edition!"
-      name = prompt("What is your name, player?", /[a-z]{4,20}/i)
+      name = prompt("What is your name, player?", /^[a-z]{4,20}$/i)
 
       if Player.exists?(name: name)
         @player = Player.find_by(name: name)
@@ -39,7 +39,7 @@ module Guessr
     end
 
     def new_game
-      @game = @player.games.create(answer: rand(1..MAX_NUMBER))
+      @game = @player.games.create(answer: rand(1...MAX_NUMBER))
     end
 
     def choose_game
@@ -47,8 +47,8 @@ module Guessr
       if existing_games.count.zero?
         new_game
       else
-        choice = prompt("Would you like to play a (N)ew game or (R)esume an old game? (N/R)", /[nr]/i)
-        if choice == "N"
+        choice = prompt("Would you like to play a (N)ew game or (R)esume an old game? (N/R)", /^[nr]$/i)
+        if choice.upcase == "N"
           new_game
         else
           resume_game
@@ -59,7 +59,7 @@ module Guessr
     def resume_game
       puts "Which game would you like to resume?"
       @player.games.each do |game|
-        "ID: #{@game.id}  |  Last Guess: #{@game.last_guess}"
+        puts "ID: #{game.id}  |  Last Guess: #{game.last_guess}"
       end
       game_id = gets.chomp.to_i
       until @player.games.find_by(id: game_id)
@@ -71,8 +71,8 @@ module Guessr
 
     def take_turn
       @game.show_progress if @game.last_guess
-      guess = prompt("What is your new guess?", /\d+/)
-      @game.make_guess(guess)
+      guess = prompt("What is your new guess? (1-1000)", /^\d{1,3}$/)
+      @game.make_guess(guess.to_i)
     end
 
     def play_game
@@ -82,7 +82,8 @@ module Guessr
     end
 
     def play_again?
-      prompt("Would you like to play again? (Y/N)", /[yn]/i)
+      choice = prompt("Would you like to play again? (Y/N)", /^[yn]$/i)
+      choice.upcase == "Y"
     end
 
     def run
