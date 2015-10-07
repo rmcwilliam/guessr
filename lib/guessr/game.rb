@@ -12,9 +12,10 @@ module Guessr
 
     def make_guess(guess)
       self.update(last_guess: guess, turn_count: self.turn_count + 1)
+      self.update(finished: true) if self.win?
     end
 
-    def finished?
+    def win?
       self.answer == self.last_guess
     end
 

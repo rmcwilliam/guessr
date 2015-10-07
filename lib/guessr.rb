@@ -38,6 +38,10 @@ module Guessr
       choose_game
     end
 
+    def new_game
+      @game = @player.games.create(answer: rand(1..MAX_NUMBER))
+    end
+
     def choose_game
       existing_games = @player.games.where(finished: false)
       if existing_games.count.zero?
@@ -72,7 +76,7 @@ module Guessr
     end
 
     def play_game
-      until @game.finished?
+      until @game.win?
         take_turn
       end
     end
@@ -85,7 +89,7 @@ module Guessr
       greeting
       play_game
       while play_again?
-        @game = @player.games.create(answer: rand(1..MAX_NUMBER))
+        new_game
         play_game
       end
       puts "Cool! Thanks for playing. :)"
