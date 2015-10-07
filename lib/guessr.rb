@@ -70,7 +70,7 @@ module Guessr
     end
 
     def take_turn
-      @game.show_progress
+      @game.show_progress if @game.last_guess
       guess = prompt("What is your new guess?", /\d+/)
       @game.make_guess(guess)
     end
