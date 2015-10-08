@@ -69,10 +69,25 @@ module Guessr
       @game = @player.games.find(game_id)
     end
 
+    def high_score_board
+      # Display top 10 highest scores from player table 
+
+      # Put player score update with info with output from  score = @game.score   @player.update(score: score)  somewhere. 
+    end
+
+
     def take_turn
+      quit = promt("Would you like to quit(Y/N)?", /^[yn]$/i) # Abort/die 
+      if quit.upcase = "Y"
+        puts "Ok, see ya!"
+        exit                      # Allow player to quit....  Maybe message starts to prompt after five tries or something..
+      else
+        "I didn't think you were a quitter!"
+      end
       @game.show_progress if @game.last_guess
       guess = prompt("What is your new guess? (1-1000)", /^\d{1,3}$/)
       @game.make_guess(guess.to_i)
+      binding.pry
     end
 
     def play_game
@@ -98,7 +113,6 @@ module Guessr
   end
 end
 
-binding.pry
 
 app = Guessr::App.new
 app.run
